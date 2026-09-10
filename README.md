@@ -1,1 +1,1 @@
-Unofficial Port of FiltPick by [APeng215]([https://fabricmc.net](https://modrinth.com/user/APeng215))
+Unofficial Port of [APeng215](https://modrinth.com/user/APeng215)
