@@ -1,0 +1,74 @@
+plugins {
+    id 'multiloader-loader'
+    id 'net.fabricmc.fabric-loom'
+}
+tasks.withType(Javadoc) {
+    failOnError false
+}
+dependencies {
+    minecraft "com.mojang:minecraft:${minecraft_version}"
+    implementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
+    implementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
+    // FCAP dependency
+    api "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:${forge_config_api_port_version}"
+    include "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:${forge_config_api_port_version}"
+    // Inventory Profiles Next. To fix https://github.com/APeng215/FiltPick/issues/12
+    compileOnly "maven.modrinth:inventory-profiles-next:${ipn_version}"
+}
+
+loom {
+    def aw = project(':common').file("src/main/resources/${mod_id}.accesswidener")
+    if (aw.exists()) {
+        accessWidenerPath.set(aw)
+    }
+    mixin {
+        defaultRefmapName.set("${mod_id}.refmap.json")
+    }
+    runs {
+        client {
+            client()
+            setConfigName('Fabric Client')
+            ideConfigGenerated(true)
+            runDir('runs/client')
+        }
+        server {
+            server()
+            setConfigName('Fabric Server')
+            ideConfigGenerated(true)
+            runDir('runs/server')
+        }
+    }
+}
+
+fabricApi {
+    configureTests {
+        // Contains a boolean indicating whether a new source set should be created for the tests.
+        // Defaults to `false`
+        createSourceSet = false
+
+        // Contains a string representing the mod ID associated with the tests. This must be set if `createSourceSet` is true.
+        // This must be the mod id of the mod used for tests in the gametest source set and not your main mod id.
+        modId = "${mod_id}-test"
+
+        // Contains a boolean indicating whether a run configuration will be created for the server side game tests, using Vanilla Game Test framework.
+        // Defaults to `true`
+        enableGameTests = true
+
+        // Contains a boolean indicating whether a run configuration will be created for the client side game tests, using the Fabric API Client Test framework.
+        // Defaults to `true`
+        enableClientGameTests = false
+
+        // Contains a boolean indicating whether the eula has been accepted. By enabling this you agree to the Minecraft EULA located at https://aka.ms/MinecraftEULA.
+        // Defaults to `false`
+        eula = true
+
+        // Contains a boolean indicating whether the run directories should be cleared before running the tests.
+        // This only works when `enableClientGameTests` is `true`.
+        // Defaults to `true`
+        clearRunDirectory = true
+
+        // Contains a string representing the username to use for the client side game tests.
+        // Defaults to `Player0`
+        username = "Player0"
+    }
+}
